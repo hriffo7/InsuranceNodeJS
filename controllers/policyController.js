@@ -11,4 +11,15 @@ module.exports = function(app) {
         res.status(400).send(err);
       });
   });
+
+  app.get("/api/policy/getPoliciesByUserName/:userName", function(req, res) {
+    policyService
+      .getPoliciesByUserName(req.params.userName)
+      .then(policiesByUserName => {
+        res.send(policiesByUserName);
+      })
+      .catch(err => {
+        res.status(400).send(err);
+      });
+  });
 };
