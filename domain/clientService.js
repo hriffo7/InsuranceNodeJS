@@ -3,69 +3,45 @@ const _ = require("lodash");
 const request = require("request");
 const policyService = require("./policyService");
 
-exports.getClients = function() {
-  return new Promise(function(resolve, reject) {
-    getClientsData(resolve);
+exports.findByName = async function(name) {
+  const clientData = await exports.getClientsData();
+  var clientsByName = _.filter(clientData.clients, { name: name });
+
+  return clientsByName;
+};
+
+exports.findById = async function(id) {
+  const clientData = await exports.getClientsData();
+  var clientById = _.filter(clientData.clients, { id: id });
+
+  return clientById;
+};
+
+exports.findByPolicyId = async function(id) {
+  const policyById = await policyService.findById(id);
+
+  const clientsData = await exports.getClientsData();
+  var filteredPolicyById = _.filter(clientsData.clients, {
+    id: policyById[0].clientId
   });
+
+  return filteredPolicyById;
 };
 
-getClientsData = function(callBack) {
-  request
-    .get(config.clientEndPoint, function(err, response) {
-      if (err) {
-        return reject(err);
-      }
-      if (response.statusCode >= 400) {
-        err = new Error("Http Error");
-        err.statusCode = response.statusCode;
-        return reject(err);
-      }
-      callBack(null, JSON.parse(response.body));
-    })
-    .end();
-};
-
-exports.findByName = function(name) {
+exports.getClientsData = function() {
   return new Promise(function(resolve, reject) {
-    this.getClientsData(function(err, result) {
-      if (err) {
-        console.log(err);
-        return reject(err);
-      }
-      var filteredByName = _.filter(result.clients, { name: name });
-      resolve(filteredByName);
-    });
-  });
-};
-
-exports.findById = function(id) {
-  return new Promise(function(resolve, reject) {
-    getClientsData(function(err, result) {
-      if (err) {
-        console.log(err);
-      }
-      var filteredById = _.filter(result.clients, { id: id });
-      resolve(filteredById);
-    });
-  });
-};
-
-exports.findByPolicyId = function(id) {
-  return new Promise(function(resolve, reject) {
-    policyService.getPolicyData(function(err, result) {
-      if (err) {
-        console.log(err);
-      }
-      var filteredPolicyById = _.filter(result.policies, { id: id });
-      var clientId = filteredPolicyById[0].clientId;
-
-      getClientsData(function(err, result) {
+    request
+      .get(config.clientEndPoint, function(err, response) {
         if (err) {
-          console.log(err);
+          return reject(err);
         }
-        var filteredById = _.filter(result.clients, { id: clientId });
-        resolve(filteredById);
-      });
-    });
+        if (response.statusCode >= 400) {
+          err = new Error("Http Error");
+          err.statusCode = response.statusCode;
+          return reject(err);
+        }
+        resolve(JSON.parse(response.body));
+      })
+      .end();
   });
 };

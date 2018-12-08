@@ -3,45 +3,46 @@ const request = require("request");
 const clientService = require("./clientService");
 const _ = require("lodash");
 
-exports.findByClientId = function(clientId) {
-  return new Promise(function(resolve, reject) {
-    exports.getPolicyData(function(err, result) {
-      if (err) {
-        console.log(err);
-      }
-      var filteredByClientId = _.filter(result.policies, {
-        clientId: clientId
-      });
-      resolve(filteredByClientId);
-    });
+exports.findById = async function(id) {
+  const policyData = await exports.getPolicyData();
+  var policyById = _.filter(policyData.policies, {
+    id: id
   });
+
+  return policyById;
 };
 
-exports.getPolicyData = function(callBack) {
-  request
-    .get(config.policyEndPoint, function(err, response) {
-      if (err) {
-        return reject(err);
-      }
-      if (response.statusCode >= 400) {
-        err = new Error("Http Error");
-        err.statusCode = response.statusCode;
-        return reject(err);
-      }
-      callBack(null, JSON.parse(response.body));
-    })
-    .end();
+exports.findByClientId = async function(clientId) {
+  const policyData = await exports.getPolicyData();
+  var filteredByClientId = _.filter(policyData.policies, {
+    clientId: clientId
+  });
+
+  return filteredByClientId;
 };
 
-exports.getPoliciesByUserName = function(name) {
+exports.getPoliciesByUserName = async function(name) {
+  const clientByName = await clientService.findByName(name);
+  console.log(clientByName);
+  const policiesByClientId = await exports.findByClientId(clientByName[0].id);
+
+  return policiesByClientId;
+};
+
+exports.getPolicyData = function() {
   return new Promise(function(resolve, reject) {
-    clientService.findByName(name).then(client => {
-      if (client.length == 0) {
-        resolve(client);
-      }
-      exports.findByClientId(client[0].id).then(data => {
-        resolve(data);
-      });
-    });
+    request
+      .get(config.policyEndPoint, function(err, response) {
+        if (err) {
+          return reject(err);
+        }
+        if (response.statusCode >= 400) {
+          err = new Error("Http Error");
+          err.statusCode = response.statusCode;
+          return reject(err);
+        }
+        resolve(JSON.parse(response.body));
+      })
+      .end();
   });
 };
