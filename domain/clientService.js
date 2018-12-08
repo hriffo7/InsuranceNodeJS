@@ -1,6 +1,6 @@
 var config = require("../config/config");
 const _ = require("lodash");
-const request = require("request");
+const request = require("request-promise");
 const policyService = require("./policyService");
 
 exports.findByName = async function(name) {
@@ -28,20 +28,14 @@ exports.findByPolicyId = async function(id) {
   return filteredPolicyById;
 };
 
-exports.getClientsData = function() {
-  return new Promise(function(resolve, reject) {
-    request
-      .get(config.clientEndPoint, function(err, response) {
-        if (err) {
-          return reject(err);
-        }
-        if (response.statusCode >= 400) {
-          err = new Error("Http Error");
-          err.statusCode = response.statusCode;
-          return reject(err);
-        }
-        resolve(JSON.parse(response.body));
-      })
-      .end();
-  });
+exports.getClientsData = async function() {
+  var options = {
+    uri: config.clientEndPoint,
+    method: "GET",
+    json: true
+  };
+
+  const result = await request(options);
+
+  return result;
 };
