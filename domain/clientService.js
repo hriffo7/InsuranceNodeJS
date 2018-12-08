@@ -1,4 +1,3 @@
-const http = require("http");
 var config = require("../config/config");
 const _ = require("lodash");
 const request = require("request");
@@ -31,24 +30,13 @@ exports.findByName = function(name) {
     this.getClientsData(function(err, result) {
       if (err) {
         console.log(err);
+        return reject(err);
       }
       var filteredByName = _.filter(result.clients, { name: name });
       resolve(filteredByName);
     });
   });
 };
-
-// async function findByName(name) {
-//   this.getClientsData(function(err, result) {
-//     if (err) {
-//       console.log(err);
-//     }
-//     var filteredByName = _.filter(result.clients, { name: name });
-//     resolve(filteredByName);
-//   });
-// }
-
-// exports.findByName = findByName;
 
 exports.findById = function(id) {
   return new Promise(function(resolve, reject) {
@@ -76,7 +64,6 @@ exports.findByPolicyId = function(id) {
           console.log(err);
         }
         var filteredById = _.filter(result.clients, { id: clientId });
-        console.log(filteredById);
         resolve(filteredById);
       });
     });
