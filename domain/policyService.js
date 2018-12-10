@@ -14,7 +14,6 @@ exports.findById = async function(id) {
 
 exports.findByClientId = async function(clientId) {
   const policyData = await exports.getPolicyData();
-  console.log(policyData);
   var filteredByClientId = _.filter(policyData.policies, {
     clientId: clientId
   });
@@ -24,7 +23,6 @@ exports.findByClientId = async function(clientId) {
 
 exports.getPoliciesByUserName = async function(name) {
   const clientByName = await clientService.findByName(name);
-  console.log(clientByName);
   const policiesByClientId = await exports.findByClientId(clientByName[0].id);
 
   return policiesByClientId;

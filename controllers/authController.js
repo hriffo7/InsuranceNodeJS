@@ -1,5 +1,18 @@
-var jwt = require("jsonwebtoken");
+var clientService = require("../domain/clientService");
+var authService = require("../domain/authService");
 
-module.exports = {
-  login: async (request, response, next) => {}
+module.exports = function(app) {
+  app.post("/api/auth/login", async (request, response, next) => {
+    try {
+      const clientByEmail = await clientService.findByEmail(request.body.email);
+      if (clientByEmail != null) {
+        const token = await authService.getToken(clientByEmail);
+        response.send(token);
+      }
+
+      response.status(401).send("Unauthorized");
+    } catch (error) {
+      response.status(400).send(error.message);
+    }
+  });
 };
