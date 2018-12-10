@@ -32,12 +32,12 @@ module.exports = {
         }
         //validates if the decoded token has de required role for the action
         if (actionRoles.indexOf(decoded.roles) == -1) {
-          response
+          return response
             .status(403)
             .send("You do not have rights to perform this request");
         }
 
-        request.decoded = decoded;
+        //request.decoded = decoded;
         next();
       });
     };
