@@ -3,7 +3,6 @@ var configValues = require("../config/config");
 
 module.exports = {
   authorize: function(roles) {
-    const actionRoles = roles;
     return function(request, response, next) {
       var token =
         request.body.token ||
@@ -30,14 +29,13 @@ module.exports = {
             .status(401)
             .send({ auth: false, message: "Failed to authenticate token." });
         }
+
         //validates if the decoded token has de required role for the action
-        if (actionRoles.indexOf(decoded.roles) == -1) {
+        if (roles.indexOf(decoded.roles) == -1) {
           return response
             .status(403)
             .send("You do not have rights to perform this request");
         }
-
-        //request.decoded = decoded;
         next();
       });
     };

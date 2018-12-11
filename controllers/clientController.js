@@ -7,7 +7,6 @@ module.exports = function(app) {
     verifyToken.authorize(["admin", "user"]),
     async (request, response) => {
       try {
-        throw new Error("test morgan");
         const getClientsByName = await clientService.findByName(
           request.params.name
         );
