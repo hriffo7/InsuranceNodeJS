@@ -2,7 +2,7 @@ var clientService = require("../domain/clientService");
 var authService = require("../domain/authService");
 
 module.exports = function(app) {
-  app.post("/api/auth/login", async (request, response, next) => {
+  app.post("/api/auth/requestToken", async (request, response, next) => {
     try {
       const clientByEmail = await clientService.findByEmail(request.body.email);
       if (clientByEmail != null) {
