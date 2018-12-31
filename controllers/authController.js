@@ -1,5 +1,5 @@
-var clientService = require("../domain/clientService");
-var authService = require("../domain/authService");
+var clientService = require("../service/clientService");
+var authService = require("../service/authService");
 
 module.exports = function(app) {
   app.post("/api/auth/requestToken", async (request, response, next) => {

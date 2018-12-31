@@ -21,6 +21,7 @@ module.exports = {
         // Remove Bearer from string
         token = token.slice(7, token.length).trimLeft();
       }
+
       // verifies secret and checks exp
       jwt.verify(token, configValues.secret, function(err, decoded) {
         if (err) {

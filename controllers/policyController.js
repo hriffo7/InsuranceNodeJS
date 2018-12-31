@@ -1,4 +1,4 @@
-var policyService = require("../domain/policyService");
+var policyService = require("../service/policyService");
 var verifyToken = require("../middlewares/verifyToken");
 
 module.exports = function(app) {

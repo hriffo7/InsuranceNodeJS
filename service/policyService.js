@@ -1,11 +1,11 @@
 var config = require("../config/config");
-const request = require("request-promise");
 const clientService = require("./clientService");
+const http = require("./httpService");
 const _ = require("lodash");
 
 exports.findById = async function(id) {
   const policyData = await exports.getPolicyData();
-  var policyById = _.filter(policyData.policies, {
+  var policyById = _.find(policyData.policies, {
     id: id
   });
 
@@ -29,13 +29,7 @@ exports.getPoliciesByUserName = async function(name) {
 };
 
 exports.getPolicyData = async function() {
-  var options = {
-    uri: config.policyEndPoint,
-    method: "GET",
-    json: true
-  };
+  const listOfPolicies = await http.get(config.policyEndPoint);
 
-  const result = await request(options);
-
-  return result;
+  return listOfPolicies;
 };

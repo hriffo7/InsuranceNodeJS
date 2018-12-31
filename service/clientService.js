@@ -1,18 +1,22 @@
 var config = require("../config/config");
 const _ = require("lodash");
-const request = require("request-promise");
 const policyService = require("./policyService");
+const http = require("./httpService");
 
 exports.findByEmail = async function(email) {
   const clientData = await exports.getClientsData();
-  var clientByEmail = _.filter(clientData.clients, { email: email });
+  var clientByEmail = _.find(clientData.clients, function(o) {
+    return o.email.toLowerCase() === email.toLowerCase();
+  });
 
-  return clientByEmail[0];
+  return clientByEmail;
 };
 
 exports.findByName = async function(name) {
   const clientData = await exports.getClientsData();
-  var clientsByName = _.filter(clientData.clients, { name: name });
+  var clientsByName = _.filter(clientData.clients, function(o) {
+    return o.name.toLowerCase() === name.toLowerCase();
+  });
 
   return clientsByName;
 };
@@ -29,20 +33,14 @@ exports.findByPolicyId = async function(id) {
 
   const clientsData = await exports.getClientsData();
   var filteredPolicyById = _.filter(clientsData.clients, {
-    id: policyById[0].clientId
+    id: policyById.clientId
   });
 
   return filteredPolicyById;
 };
 
 exports.getClientsData = async function() {
-  var options = {
-    uri: config.clientEndPoint,
-    method: "GET",
-    json: true
-  };
+  const listOfClients = await http.get(config.clientEndPoint);
 
-  const result = await request(options);
-
-  return result;
+  return listOfClients;
 };

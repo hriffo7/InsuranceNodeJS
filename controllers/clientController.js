@@ -1,4 +1,4 @@
-var clientService = require("../domain/clientService");
+var clientService = require("../service/clientService");
 var verifyToken = require("../middlewares/verifyToken");
 
 module.exports = function(app) {
